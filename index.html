@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TTDQ — Доступ к сервисам без границ</title>
+    <title>TTDQ — Доступ к играм и сервисам без границ</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* --- 1. Общие стили и шрифт --- */
@@ -237,15 +237,20 @@
             user-select: none;
             transition: background-color 0.2s, color 0.2s;
             font-weight: 500;
+            /* Убедимся, что начальный текст виден */
+            min-width: 250px; 
+            text-align: center;
         }
 
         .path-container:hover {
             background-color: #4c4c4c;
         }
 
+        /* Стиль для уведомления о копировании */
         .path-container.copied {
             background-color: var(--color-accent-green); 
             color: var(--color-dark-bg);
+            font-weight: 700;
         }
         
         /* --- 8. Кнопка СКАЧАТЬ (Главная кнопка действия) --- */
@@ -307,7 +312,7 @@
     <div class="info-section">
         <h2 class="section-header">TTDQ</h2>
         <h2>Доступ к играм и сервисам <span style="color: var(--color-accent-green);">без границ</span></h2>
-        <p class="subtitle">Становитесь с ошибкой **0x8027025a** и региональными ограничениями? Мы поможем получить доступ к сервисам, ChatGPT, Gemini, Grok и т.д. . Без установки ПО и потери скорости.</p>
+        <p class="subtitle">Становитесь с ошибкой **0x8027025a** и региональными ограничениями? Мы поможем получить доступ к играм, Xbox Live, Game Pass и сервисам по всему миру. Без установки ПО и потери скорости.</p>
         
         <a href="#instruction" class="action-button" id="startSetupButton" style="width: 250px; margin-top: 10px; margin-bottom: 70px;">Начать настройку</a>
         
@@ -320,12 +325,12 @@
     
     <div class="info-section">
         <h2>Свобода от географических ограничений</h2>
-        <p class="subtitle">Наш сервис создан, чтобы вернуть вам доступ к приложениям, недоступным в вашем регионе. Благодаря ему вы снова сможете наслаждаться:</p>
+        <p class="subtitle">Наш сервис создан, чтобы вернуть вам доступ к играм и приложениям, недоступным в вашем регионе. Благодаря ему вы снова сможете наслаждаться:</p>
 
         <div class="grid">
             <div class="grid-item">
                 <h4><span class="icon">🎮</span> Игры</h4>
-                <p>Доступ к ChatGPT, Gemini, Grok, играм-службам и т.п.</p>
+                <p>Доступ к Xbox Live, Game Pass, PlayStation Network, Call of Duty, Destiny 2, WOT, играм-службам и т.п.</p>
             </div>
              <div class="grid-item">
                 <h4><span class="icon">⚙️</span> AI-сервисы</h4>
@@ -379,7 +384,7 @@
             </div>
              <div class="grid-item">
                 <h4><span class="icon">🌐</span> Универсальная совместимость</h4>
-                <p>Подходит для любой платформы, включая Xbox, PC и мобильные устройства.</p>
+                <p>Подходит для любой платформы, включая Xbox, PlayStation, PC и мобильные устройства.</p>
             </div>
              <div class="grid-item">
                 <h4><span class="icon">🔒</span> Улучшение приватности</h4>
@@ -437,36 +442,43 @@
     const startSetupButton = document.getElementById('startSetupButton');
     const instructionBlock = document.getElementById('instruction');
 
-    startSetupButton.addEventListener('click', (e) => {
-        // Отменяем стандартное поведение перехода по якорю
-        e.preventDefault(); 
-        
-        // Плавная прокрутка к блоку с инструкциями
-        instructionBlock.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+    if (startSetupButton && instructionBlock) {
+        startSetupButton.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            instructionBlock.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         });
-    });
+    }
 
-    // 2. Скрипт для копирования пути при нажатии
+    // 2. Скрипт для копирования пути при нажатии (УЛУЧШЕНА ЛОГИКА)
     const pathToCopy = document.getElementById('path-to-copy');
     
-    pathToCopy.addEventListener('click', () => {
-        const path = pathToCopy.textContent;
-        // Копирование в буфер обмена
-        navigator.clipboard.writeText(path).then(() => {
-            pathToCopy.textContent = 'Путь скопирован!';
-            pathToCopy.classList.add('copied');
+    if (pathToCopy) {
+        // Сохраняем исходный текст, чтобы вернуть его после копирования
+        const originalText = pathToCopy.textContent;
+        
+        pathToCopy.addEventListener('click', () => {
             
-            setTimeout(() => {
-                pathToCopy.textContent = path; 
-                pathToCopy.classList.remove('copied');
-            }, 1000);
-        }).catch(err => {
-            console.error('Не удалось скопировать текст: ', err);
-            alert('Ошибка при копировании. Попробуйте скопировать вручную: ' + path);
+            // Используем navigator.clipboard.writeText для современного и надежного копирования
+            navigator.clipboard.writeText(originalText).then(() => {
+                // Уведомление: меняем текст и добавляем зеленый класс
+                pathToCopy.textContent = 'Путь скопирован!';
+                pathToCopy.classList.add('copied');
+                
+                // Возвращаем исходный вид через 1.5 секунды
+                setTimeout(() => {
+                    pathToCopy.textContent = originalText; 
+                    pathToCopy.classList.remove('copied');
+                }, 1500); // Увеличил время, чтобы пользователь успел увидеть
+            }).catch(err => {
+                // Если копирование не сработало (старый браузер, http)
+                console.error('Ошибка при копировании: ', err);
+                alert('Ошибка при копировании. Попробуйте скопировать вручную: ' + originalText);
+            });
         });
-    });
+    }
 </script>
 
 </body>
